@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  master:
+    image: citusdata/citus:10.2
+    platform: linux/amd64
+    container_name: citus_master
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: master_db
+    volumes:
+#      - ./custom_postgresql.conf:/etc/postgresql/postgresql.conf
+      - ./init-master.sh:/docker-entrypoint-initdb.d/init-master.sh
+      - ./init_citus.sql:/docker-entrypoint-initdb.d/init_citus.sql
+    networks:
+      - citus_network
+
+  worker1:
+    image: citusdata/citus:10.2
+    platform: linux/amd64
+    container_name: citus_worker1
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: master_db
+    volumes:
+      - ./custom_postgresql.conf:/etc/postgresql/postgresql.conf
+    networks:
+      - citus_network
+
+  worker2:
+    image: citusdata/citus:10.2
+    platform: linux/amd64
+    container_name: citus_worker2
+    ports:
+      - "5434:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: master_db
+    volumes:
+      - ./custom_postgresql.conf:/etc/postgresql/postgresql.conf
+    networks:
+      - citus_network
+
+networks:
+  citus_network:

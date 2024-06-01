@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  main_db:
+    image: postgres:12
+    container_name: main_db
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: main_db
+    volumes:
+      - ./data_main:/var/lib/postgresql/data
+    networks:
+      - shard_network
+
+  shard1:
+    image: postgres:12
+    container_name: shard1
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: shard1
+    volumes:
+      - ./data_shard1:/var/lib/postgresql/data
+    networks:
+      - shard_network
+    depends_on:
+      - main_db
+
+  shard2:
+    image: postgres:12
+    container_name: shard2
+    ports:
+      - "5435:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: shard2
+    volumes:
+      - ./data_shard2:/var/lib/postgresql/data
+    networks:
+      - shard_network
+    depends_on:
+      - main_db
+
+networks:
+  shard_network:

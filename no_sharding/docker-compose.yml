@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  main_db:
+    image: postgres:12
+    container_name: main_db
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: main_db
+    volumes:
+      - ./data_main:/var/lib/postgresql/data
+    networks:
+      - shard_network
+
+networks:
+  shard_network:
